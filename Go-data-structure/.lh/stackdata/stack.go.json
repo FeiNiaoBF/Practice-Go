@@ -1,0 +1,18 @@
+{
+    "sourceFile": "stackdata/stack.go",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1710809950534,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1710809950534,
+            "name": "Commit-0",
+            "content": "package stackdata\n\nimport \"fmt\"\n\n/// Stack Data Structure in Golang\n// Stack Data Structure\n\ntype node[T any] struct {\n\tdata T\n\tnext *node[T]\n}\n\nfunc newNode[T any](data T) *node[T] {\n\treturn &node[T]{\n\t\tdata: data,\n\t\tnext: nil,\n\t}\n}\n\ntype Stack[T any] struct {\n\ttop  *node[T]\n\tsize uint\n}\n\nfunc NewStack[T any]() *Stack[T] {\n\treturn &Stack[T]{\n\t\ttop:  nil,\n\t\tsize: 0,\n\t}\n}\n\n// Public function of stack\n\n// Size get the stack length\nfunc (s *Stack[T]) Size() uint {\n\treturn s.size\n}\n\n// Push push data to the top of the stack\nfunc (s *Stack[T]) Push(data T) *Stack[T] {\n\tnewNode := newNode[T](data)\n\tnewNode.next = s.top\n\ts.top = newNode\n\ts.size += 1\n\treturn s\n}\n\n// Pop pop the top node of the stack\nfunc (s *Stack[T]) Pop() T {\n\tresult := s.Peek()\n\ts.top = s.top.next\n\ts.size -= 1\n\treturn result\n}\n\n// IsEmpty return true if the stack is empty\nfunc (s *Stack[T]) IsEmpty() bool {\n\treturn s.size == 0\n}\n\n// Peek return the top node value\nfunc (s *Stack[T]) Peek() T {\n\tif s.IsEmpty() {\n\t\tvar zeroValue T\n\t\treturn zeroValue\n\t}\n\treturn s.top.data\n}\n\n// PrintStack print the stack\nfunc (s *Stack[T]) PrintStack() {\n\tcurr := s.top\n\tfmt.Print(\"Stack: \")\n\tfor curr != nil {\n\t\tfmt.Print(curr.data, \"->\")\n\t\tcurr = curr.next\n\t}\n\tfmt.Print(\"nil\\n\")\n}\n"
+        }
+    ]
+}

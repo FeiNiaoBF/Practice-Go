@@ -1,0 +1,18 @@
+{
+    "sourceFile": "stack_test.go",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1710811628220,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1710811628220,
+            "name": "Commit-0",
+            "content": "package stackdata_test\n\nimport (\n\t\"testing\"\n\n\t\"GoAlgo/stackdata\"\n)\n\nfunc TestNewStack(t *testing.T) {\n\tstack := stackdata.NewStack[int]()\n\tif stack == nil {\n\t\tt.Error(\"NewStack() returned nil\")\n\t}\n}\n"
+        }
+    ]
+}
