@@ -5,11 +5,17 @@ import "github.com/hajimehoshi/ebiten/v2"
 // Board 游戏的具体实现
 type Board struct {
 	cells [][]Cell
+	// The board dimensions (i.e. num rows and num columns)
+	dimension int
+	// The scale of each cell relative to the game screen
+	scale int
 }
 
 func NewBoard(dimension int, isRand bool) *Board {
 	board := &Board{
-		cells: NewCells(dimension, isRand),
+		cells:     NewCells(dimension, isRand),
+		dimension: dimension,
+		scale:     scale,
 	}
 	return board
 }
@@ -73,7 +79,7 @@ func (b *Board) countCellNeighbors(c *Cell) (neighbors int) {
 
 // Returns either a 1 or 0 if the neighbor is either valid and alive or not
 func (b *Board) isNeigh(row, col int) int {
-	if row < 0 || col < 0 || row >= boardDimension || col >= boardDimension {
+	if !(row >= 0 && col >= 0 && row < b.dimension && col < b.dimension) {
 		return 0
 	}
 	if b.cells[row][col].state {
@@ -83,13 +89,18 @@ func (b *Board) isNeigh(row, col int) int {
 	}
 }
 
-// Sets the state of the clicked cell and its neighboring cells to alive
 func (b *Board) flip(x int, y int) {
-	// Scale the mouse click x and y pixel coordinates to the board dimensions
-	row := int(x / scale)
-	col := int(y / scale)
 
-	if row >= 0 && col >= 0 && row < boardDimension && col < boardDimension {
-		b.cells[row][col].state = true
+	row := int(x / b.scale)
+	col := int(y / b.scale)
+
+	for dr := -1; dr <= 1; dr++ {
+		for dc := -1; dc <= 1; dc++ {
+			diffRow := row + dr
+			diffCol := col + dc
+			if diffRow >= 0 && diffCol >= 0 && diffRow < b.dimension && diffCol < b.dimension {
+				b.cells[diffRow][diffCol].state = true
+			}
+		}
 	}
 }

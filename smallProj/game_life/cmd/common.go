@@ -4,9 +4,9 @@ import "image/color"
 
 // game windows
 const (
-	ScreenWidth    int = 600
-	ScreenHeight   int = 600
-	boardDimension int = 150
+	ScreenWidth    int = 400
+	ScreenHeight   int = 400
+	boardDimension int = 100
 	scale          int = ScreenWidth / boardDimension
 )
 

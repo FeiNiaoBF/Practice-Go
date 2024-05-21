@@ -4,19 +4,25 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+// Game represents a game state.
 type Game struct {
-	board *Board
-	image *ebiten.Image
+	board      *Board
+	boardImage *ebiten.Image
 }
 
+// NewGame generates a new Game object.
 func NewGame(isRand bool) *Game {
-	g := &Game{
-		board: NewBoard(boardDimension, isRand),
-	}
+	g := &Game{}
+	g.board = NewBoard(boardDimension, isRand)
 	return g
 }
 
-// Update game 的更新频率
+// Layout implements ebiten.Game's Layout.
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	return ScreenWidth, ScreenHeight
+}
+
+// Update the current game state.
 func (g *Game) Update() error {
 	if err := g.board.Update(); err != nil {
 		return err
@@ -24,13 +30,13 @@ func (g *Game) Update() error {
 	return nil
 }
 
-// Draw 画图---需要显示画面
+// Draw the current game state to the given screen.
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.board.Draw(screen)
-	screen.DrawImage(g.image, &ebiten.DrawImageOptions{})
-}
-
-// Layout 大小
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return ScreenWidth, ScreenHeight
+	if g.boardImage == nil {
+		w, h := ScreenWidth, ScreenHeight
+		g.boardImage = ebiten.NewImage(w, h)
+	}
+	screen.Fill(CellDead)
+	g.board.Draw(g.boardImage)
+	screen.DrawImage(g.boardImage, &ebiten.DrawImageOptions{})
 }

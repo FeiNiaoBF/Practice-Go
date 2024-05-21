@@ -12,14 +12,14 @@ var (
 )
 
 func init() {
-	flag.BoolVar(&setRand, "r", true, "use random generation")
+	flag.BoolVar(&setRand, "r", false, "use random generation")
 }
 
 func main() {
 	flag.Parse()
 
-	gameLife := cmd.NewGame(setRand)
-
+	gameLife := cmd.NewGame(false)
+	ebiten.SetTPS(120)
 	ebiten.SetWindowSize(cmd.ScreenWidth, cmd.ScreenHeight)
 	ebiten.SetWindowTitle("Game of Life")
 	if err := ebiten.RunGame(gameLife); err != nil {
