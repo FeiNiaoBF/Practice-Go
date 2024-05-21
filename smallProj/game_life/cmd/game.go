@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten"
 )
 
 // Game represents a game state.
@@ -12,8 +12,10 @@ type Game struct {
 
 // NewGame generates a new Game object.
 func NewGame(isRand bool) *Game {
-	g := &Game{}
-	g.board = NewBoard(boardDimension, isRand)
+
+	g := &Game{
+		board: NewBoard(boardDimension, isRand),
+	}
 	return g
 }
 
@@ -23,7 +25,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 // Update the current game state.
-func (g *Game) Update() error {
+func (g *Game) Update(screen *ebiten.Image) error {
 	if err := g.board.Update(); err != nil {
 		return err
 	}
@@ -34,9 +36,10 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	if g.boardImage == nil {
 		w, h := ScreenWidth, ScreenHeight
-		g.boardImage = ebiten.NewImage(w, h)
+		g.boardImage, _ = ebiten.NewImage(w, h, ebiten.FilterDefault)
 	}
 	screen.Fill(CellDead)
 	g.board.Draw(g.boardImage)
 	screen.DrawImage(g.boardImage, &ebiten.DrawImageOptions{})
+
 }

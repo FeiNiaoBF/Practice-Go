@@ -1,36 +1,29 @@
 package cmd
 
 import (
-	"github.com/hajimehoshi/ebiten/v2/vector"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"image/color"
 	"math/rand"
 	"time"
 
-	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten"
 )
 
 // Cell 是点/块
 type Cell struct {
-	image *ebiten.Image
 	row   int
 	col   int
 	scale int
 	// cell is alive or dead
 	state bool
-	color color.Color
 }
 
 func newCell(x, y int) *Cell {
-	img := ebiten.NewImage(1, 1) // 创建一个1x1的图像
-	img.Fill(CellDead)
-	img.Fill(CellDead)
 	return &Cell{
-		image: img,
 		row:   x,
 		col:   y,
 		scale: scale,
 		state: false,
-		color: CellDead,
 	}
 }
 
@@ -45,8 +38,8 @@ func NewCells(dimension int, isRand bool) [][]Cell {
 		cells[r] = make([]Cell, dimension)
 		for c := 0; c < dimension; c++ {
 			cells[r][c] = *newCell(r, c)
-			if isRand {
-				cells[r][c].state = random.Float32() < 0.5
+			if isRand && random.Float32() < 0.5 {
+				cells[r][c].state = true
 			}
 		}
 	}
@@ -54,18 +47,21 @@ func NewCells(dimension int, isRand bool) [][]Cell {
 }
 
 func (c *Cell) Draw(board *ebiten.Image) {
+	var colorCell color.Gray16
+
 	if c.state {
-		c.color = CellLive
+		// If alive, the cell fill is white
+		colorCell = CellLive
 	} else {
-		c.color = CellDead
+		// Otherwise, it is black (i.e. dead)
+		colorCell = CellDead
 	}
-	vector.DrawFilledRect(
-		board,
-		float32(c.row*c.scale),
-		float32(c.col*c.scale),
-		float32(c.scale),
-		float32(c.scale),
-		c.color,
-		true,
+
+	ebitenutil.DrawRect(board,
+		float64(c.row*scale),
+		float64(c.col*scale),
+		float64(scale),
+		float64(scale),
+		colorCell,
 	)
 }

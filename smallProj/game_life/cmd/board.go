@@ -1,6 +1,6 @@
 package cmd
 
-import "github.com/hajimehoshi/ebiten/v2"
+import "github.com/hajimehoshi/ebiten"
 
 // Board 游戏的具体实现
 type Board struct {
@@ -33,8 +33,8 @@ func (b *Board) Update() error {
 
 // Draw draws the board to the given boardImage.
 func (b *Board) Draw(screen *ebiten.Image) {
-	for row := 0; row < boardDimension; row++ {
-		for col := 0; col < boardDimension; col++ {
+	for row := 0; row < b.dimension; row++ {
+		for col := 0; col < b.dimension; col++ {
 			c := b.cells[row][col]
 			c.Draw(screen)
 		}
@@ -44,10 +44,10 @@ func (b *Board) Draw(screen *ebiten.Image) {
 // cellMove Cell 的移动规则
 func (b *Board) cellMove() {
 	// 清空
-	nextCells := NewCells(boardDimension, false)
+	nextCells := NewCells(b.dimension, false)
 
-	for r := 0; r < boardDimension; r++ {
-		for c := 0; c < boardDimension; c++ {
+	for r := 0; r < b.dimension; r++ {
+		for c := 0; c < b.dimension; c++ {
 			currCell := &b.cells[r][c]
 			neighborsNums := b.countCellNeighbors(currCell)
 			state := currCell.state
@@ -89,16 +89,19 @@ func (b *Board) isNeigh(row, col int) int {
 	}
 }
 
-func (b *Board) flip(x int, y int) {
+func (b *Board) flip(x, y int) {
 
 	row := int(x / b.scale)
 	col := int(y / b.scale)
 
+	// Iterate through the current cell's neighbors
 	for dr := -1; dr <= 1; dr++ {
 		for dc := -1; dc <= 1; dc++ {
 			diffRow := row + dr
 			diffCol := col + dc
+
 			if diffRow >= 0 && diffCol >= 0 && diffRow < b.dimension && diffCol < b.dimension {
+				// If the cell is a valid cell on the board, set it to being alive
 				b.cells[diffRow][diffCol].state = true
 			}
 		}
