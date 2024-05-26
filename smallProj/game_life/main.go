@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	gameLife := cmd.NewGame(setRand)
-	ebiten.SetMaxTPS(30)
+	ebiten.SetMaxTPS(25)
 	ebiten.SetWindowSize(cmd.ScreenWidth, cmd.ScreenHeight)
 	ebiten.SetWindowTitle("Game of Life")
 	if err := ebiten.RunGame(gameLife); err != nil {

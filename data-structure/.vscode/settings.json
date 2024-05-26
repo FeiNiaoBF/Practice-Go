@@ -1,0 +1,12 @@
+{
+    "cSpell.enableFiletypes": [
+        "lua"
+    ],
+    "go.coverOnTestPackage": false,
+    "go.coverShowCounts": false,
+    "go.coverOnSingleTestFile": false,
+    "go.coverOnSingleTest": false,
+    "files.autoSave": "onFocusChange",
+    "editor.fontSize": 16,
+    "go.formatTool": "goimports"
+}
