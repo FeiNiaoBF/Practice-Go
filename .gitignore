@@ -1,1 +1,8 @@
 *.lh
+*.idea
+*.iml
+*.vscode
+*.vs
+
+# User-specific files
+smallProj/game_life/*.exe
