@@ -9,6 +9,9 @@ type Darray struct {
 }
 
 func NewDarr(size int) *Darray {
+	if size <= 0 {
+		size = 16
+	}
 	return &Darray{
 		array: make([]int, 0, size),
 		len:   0,
@@ -37,8 +40,8 @@ func (darr *Darray) At(index int) (int, error) {
 }
 
 func (darr *Darray) Push(item int) error {
-	if item >= darr.len {
-		return errors.New("invalid item")
+	if darr.len == darr.cap {
+		darr.resize(darr.cap * 2)
 	}
 	darr.len++
 	darr.array = append(darr.array, item)
@@ -46,49 +49,65 @@ func (darr *Darray) Push(item int) error {
 }
 
 func (darr *Darray) Insert(index, item int) error {
-	if item >= darr.cap {
-		return errors.New("invalid item")
-	}
-	if index >= darr.cap {
+
+	if index >= darr.len {
 		return errors.New("invalid index")
 	}
 
-	darr.len++
+	if darr.len == darr.cap {
+		darr.resize(darr.cap * 2)
+	}
+
 	tmp := make([]int, darr.len)
 	copy(tmp, darr.array[index:])
 
 	darr.array = append(append(darr.array[:index], item), tmp...)
-
+	darr.len++
 	return nil
 }
 
 func (darr *Darray) Prepend(item int) error {
 	darr.len++
+	if darr.len == darr.cap {
+		darr.resize(darr.cap * 2)
+	}
 	return darr.Insert(0, item)
 }
 
 func (darr *Darray) Pop() (int, error) {
-	item := darr.array[(darr.len - 1):]
+	val := darr.array[darr.len - 1]
+	if darr.cap / 3 >= darr.len {
+		darr.resize(darr.cap / 2)
+	}
 	darr.len--
-	return item[0], nil
+	return val, nil
 }
 
 func (darr *Darray) Delete(index int) error {
-	if index >= darr.cap {
+	if index >= darr.len {
 		return errors.New("invalid index")
 	}
+	if darr.cap / 3 >= darr.len {
+		darr.resize(darr.cap / 2)
+	}
+	darr.array = append(darr.array[:index], darr.array[index+1:]...)
 	darr.len--
-	darr.array = append(darr.array[:index-1], darr.array[index:]...)
 	return nil
 }
 
+// Remove  return the index of the removed item
 func (darr *Darray) Remove(item int) ([]int, error) {
 	result := make([]int, 0)
 	for i, v := range darr.array {
 		if v == item {
-			darr.Delete(i)
 			result = append(result, i)
 		}
+	}
+	if len(result) == 0 {
+		return nil, errors.New("not found")
+	}
+	for i := len(result) - 1; i >= 0; i-- {
+		darr.Delete(result[i])
 	}
 	return result, nil
 }
@@ -99,8 +118,12 @@ func (darr *Darray) Find(item int) (int, error) {
 			return i, nil
 		}
 	}
-	return 0, errors.New("not valut")
+	return 0, errors.New("not found")
 }
 
 func (darr *Darray) resize(newCap int) {
+	newArray := make([]int, darr.len, newCap)
+	copy(newArray, darr.array)
+	darr.array = newArray
+	darr.cap = newCap
 }

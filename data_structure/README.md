@@ -41,23 +41,23 @@
     - [加州大学伯克利分校CS61B - 线性和多维数组（视频）](https://archive.org/details/ucberkeley_webcast_Wp8oiO_CZZE)（从15分32秒开始）
     - [动态数组（视频）](https://www.coursera.org/lecture/data-structures/dynamic-arrays-EwbnV)
     - [嵌套数组（视频）](https://www.youtube.com/watch?v=1jtrQqYpt7g)
-  - [ ] 实现一个动态数组（可自动调整大小的可变数组）：
-    - [ ] 练习使用数组和指针去编码，并且指针是通过计算去跳转而不是使用索引
-    - [ ] 通过分配内存来新建一个原生数据型数组
+  - [x] 实现一个动态数组（可自动调整大小的可变数组）：
+    - [x] 练习使用数组和指针去编码，并且指针是通过计算去跳转而不是使用索引
+    - [x] 通过分配内存来新建一个原生数据型数组
       - 可以使用 int 类型的数组，但不能使用其语法特性
       - 从大小为16或更大的数（使用2的倍数 —— 16、32、64、128）开始编写
-    - [ ] size() —— 数组元素的个数
-    - [ ] capacity() —— 可容纳元素的个数
-    - [ ] is_empty()
-    - [ ] at(index) —— 返回对应索引的元素，且若索引越界则愤然报错
-    - [ ] push(item)
-    - [ ] insert(index, item) —— 在指定索引中插入元素，并把后面的元素依次后移
-    - [ ] prepend(item) —— 可以使用上面的 insert 函数，传参 index 为 0
-    - [ ] pop() —— 删除在数组末端的元素，并返回其值
-    - [ ] delete(index) —— 删除指定索引的元素，并把后面的元素依次前移
-    - [ ] remove(item) —— 删除指定值的元素，并返回其索引（即使有多个元素）
-    - [ ] find(item) —— 寻找指定值的元素并返回其中第一个出现的元素其索引，若未找到则返回 -1
-    - [ ] resize(new_capacity) // 私有函数
+    - [x] size() —— 数组元素的个数
+    - [x] capacity() —— 可容纳元素的个数
+    - [x] is_empty()
+    - [x] at(index) —— 返回对应索引的元素，且若索引越界则愤然报错
+    - [x] push(item)
+    - [x] insert(index, item) —— 在指定索引中插入元素，并把后面的元素依次后移
+    - [x] prepend(item) —— 可以使用上面的 insert 函数，传参 index 为 0
+    - [x] pop() —— 删除在数组末端的元素，并返回其值
+    - [x] delete(index) —— 删除指定索引的元素，并把后面的元素依次前移
+    - [x] remove(item) —— 删除指定值的元素，并返回其索引（即使有多个元素）
+    - [x] find(item) —— 寻找指定值的元素并返回其中第一个出现的元素其索引，若未找到则返回 -1
+    - [x] resize(new_capacity) // 私有函数
       - 若数组的大小到达其容积，则变大一倍
       - 获取元素后，若数组大小为其容积的1/4，则缩小一半
   - [ ] 时间复杂度
@@ -69,11 +69,11 @@
 
 - ### 链表（Linked Lists）
 
-  - [ ] 介绍：
+  - [x] 介绍：
     - [ ] [链表 CS50 哈佛大学](https://www.youtube.com/watch?v=2T-A_GFuoTo&t=650s) - 这样建立了直观感。
     - [ ] [单链表（视频）](https://www.coursera.org/lecture/data-structures/singly-linked-lists-kHhgK)
-    - [ ] [CS 61B - 链表1（视频）](https://archive.org/details/ucberkeley_webcast_htzJdKoEmO0)
-    - [ ] [CS 61B - 链表 2（视频）](https://archive.org/details/ucberkeley_webcast_-c4I3gFYe3w)
+    - [x] [CS 61B - 链表1（视频）](https://archive.org/details/ucberkeley_webcast_htzJdKoEmO0)
+    - [x] [CS 61B - 链表 2（视频）](https://archive.org/details/ucberkeley_webcast_-c4I3gFYe3w)
     - [ ] [[复习] 4分钟了解链表（视频）](https://youtu.be/F8AbOfQwl1c)
   - [ ] [C代码（视频）](https://www.youtube.com/watch?v=QN6FPiD0Gzo)
             - 不是整个视频，只是关于Node结构和内存分配的部分。
