@@ -35,7 +35,7 @@
 
 - ### 数组（Arrays）
 
-  - [ ] 介绍：
+  - [x] 介绍：
     - [数组 CS50 哈佛大学](https://www.youtube.com/watch?v=tI_tIZFyKBw&t=3009s)
     - [数组（视频）](https://www.coursera.org/lecture/data-structures/arrays-OsBSF)
     - [加州大学伯克利分校CS61B - 线性和多维数组（视频）](https://archive.org/details/ucberkeley_webcast_Wp8oiO_CZZE)（从15分32秒开始）
