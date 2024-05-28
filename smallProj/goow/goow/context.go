@@ -15,8 +15,11 @@ type Context struct {
 	Res http.ResponseWriter
 	Req *http.Request
 
-	Path       string
-	Method     string
+	Path   string
+	Method string
+	// eg: [:lang]-{go, py}
+	// eg: [*] - {/x, /y, /z}
+	Params     map[string]string
 	StatusCode int
 }
 
@@ -46,6 +49,11 @@ func (ctx *Context) SetHeader(key string, value string) {
 
 func (ctx *Context) Status(status int) {
 	ctx.StatusCode = status
+}
+
+func (ctx *Context) Param(key string) string {
+	value, _ := ctx.Params[key]
+	return value
 }
 
 func (ctx *Context) SetDate(Date time.Time) {
