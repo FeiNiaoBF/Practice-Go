@@ -22,6 +22,14 @@ func main() {
 		})
 	})
 
+	r.GET("/hello/:name", func(ctx *goow.Context) {
+		ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Param("name"), ctx.Path)
+	})
+
+	r.GET("/assets/*filepath", func(ctx *goow.Context) {
+		ctx.JSON(http.StatusOK, goow.H{"filepath": ctx.Param("filepath")})
+	})
+
 	r.GET("/String", func(ctx *goow.Context) {
 		ctx.String(http.StatusOK, "hello Goow")
 	})
