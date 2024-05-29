@@ -52,8 +52,7 @@ func (ctx *Context) Status(status int) {
 }
 
 func (ctx *Context) Param(key string) string {
-	value, _ := ctx.Params[key]
-	return value
+	return ctx.Params[key]
 }
 
 func (ctx *Context) SetDate(Date time.Time) {
