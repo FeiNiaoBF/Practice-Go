@@ -2,6 +2,7 @@ package goow
 
 import (
 	"net/http"
+	"strings"
 )
 
 // HandlerFunc defines the request handler used by gee
@@ -18,25 +19,12 @@ type Engine struct {
 // New is the constructor of gee.Engine
 func New() *Engine {
 	engine := &Engine{router: newRouter()}
+	// 自己就是一个大组
 	engine.RouterGroup = &RouterGroup{engine: engine}
 	// main group
 	engine.groups = []*RouterGroup{engine.RouterGroup}
 	return engine
 }
-
-// func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-// 	engine.router.addRoute(method, pattern, handler)
-// }
-
-// // GET defines the method to add GET request
-// func (engine *Engine) GET(pattern string, handler HandlerFunc) {
-// 	engine.addRoute("GET", pattern, handler)
-// }
-
-// // POST defines the method to add POST request
-// func (engine *Engine) POST(pattern string, handler HandlerFunc) {
-// 	engine.addRoute("POST", pattern, handler)
-// }
 
 // Run defines the method to start a http server
 func (engine *Engine) Run(addr string) (err error) {
@@ -46,6 +34,15 @@ func (engine *Engine) Run(addr string) (err error) {
 // Main function
 // 每一个 Socket 来的时候做这个
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	ctx := newContext(w, req)
-	engine.router.handle(ctx)
+	var middlewares []HandlerFunc
+	// 按组级来分中间件
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+	c := newContext(w, req)
+	// 中间件
+	c.handlers = middlewares
+	engine.router.handle(c)
 }

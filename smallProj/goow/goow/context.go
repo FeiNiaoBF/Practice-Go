@@ -21,6 +21,9 @@ type Context struct {
 	// eg: [*] - {/x, /y, /z}
 	Params     map[string]string
 	StatusCode int
+	// middleware
+	handlers []HandlerFunc
+	index    int
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -29,6 +32,15 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+		index:  -1,
+	}
+}
+
+func (ctx *Context) Next() {
+	ctx.index++
+	for ; ctx.index < len(ctx.handlers); ctx.index++ {
+		// 做下一个中间件
+		ctx.handlers[ctx.index](ctx)
 	}
 }
 
@@ -87,4 +99,9 @@ func (ctx *Context) HTML(code int, html string) {
 	ctx.Status(code)
 	ctx.SetDate(time.Now().Local())
 	_, _ = ctx.Res.Write([]byte(html))
+}
+
+func (ctx *Context) Fail(code int, err string) {
+	ctx.index = len(ctx.handlers)
+	ctx.JSON(code, H{"message": err})
 }

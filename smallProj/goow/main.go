@@ -1,13 +1,16 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/FeiNiaoBF/Practice-Go/smallProj/goow/goow"
 )
 
 func main() {
 	r := goow.New()
+	r.Use(goow.Logger())
 	r.GET("/", func(ctx *goow.Context) {
 		ctx.HTML(http.StatusOK, "<h1>There Goow</h1>")
 	})
@@ -37,9 +40,10 @@ func main() {
 
 	// GROUP BY
 	v1 := r.Group("/g1")
+	//v1.Use(loggerv2())
 	{
 		v1.GET("/", func(c *goow.Context) {
-			c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
+			c.HTML(http.StatusOK, "<h1>Hello g1 </h1>")
 		})
 
 		v1.GET("/hello", func(c *goow.Context) {
@@ -48,6 +52,7 @@ func main() {
 		})
 	}
 	v2 := r.Group("/g2")
+	v2.Use(loggerv2())
 	{
 		v2.GET("/hello/:name", func(c *goow.Context) {
 			// expect /hello/geektutu
@@ -62,6 +67,32 @@ func main() {
 
 	}
 
-
 	r.Run(":9999")
+	//r := goow.New()
+	//r.Use(goow.Logger()) // global midlleware
+	//r.GET("/", func(c *goow.Context) {
+	//	c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
+	//})
+	//
+	//v2 := r.Group("/v2")
+	//v2.Use(loggerv2()) // v2 group middleware
+	//{
+	//	v2.GET("/hello/:name", func(c *goow.Context) {
+	//		// expect /hello/geektutu
+	//		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
+	//	})
+	//}
+	//
+	//r.Run(":9999")
+}
+
+func loggerv2() goow.HandlerFunc {
+	return func(c *goow.Context) {
+		// Start timer
+		t := time.Now()
+		// if a server error occurred
+		c.Fail(500, "Internal Server Error")
+		// Calculate resolution time
+		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+	}
 }
