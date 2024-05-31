@@ -1,6 +1,7 @@
 package goow
 
 import (
+	"html/template"
 	"net/http"
 	"strings"
 )
@@ -14,6 +15,9 @@ type Engine struct {
 	*RouterGroup
 	router *router
 	groups []*RouterGroup // store all groups
+	// template
+	htmpls  *template.Template
+	funcMap template.FuncMap
 }
 
 // New is the constructor of gee.Engine
@@ -44,5 +48,14 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c := newContext(w, req)
 	// 中间件
 	c.handlers = middlewares
+	c.engine = engine
 	engine.router.handle(c)
+}
+
+func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
+	engine.funcMap = funcMap
+}
+
+func (engine *Engine) LoadHTMLGlob(pattern string) {
+	engine.htmpls = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }

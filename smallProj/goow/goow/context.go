@@ -22,8 +22,10 @@ type Context struct {
 	Params     map[string]string
 	StatusCode int
 	// middleware
-	handlers []HandlerFunc
 	index    int
+	handlers []HandlerFunc
+	// engine pointer
+	engine *Engine
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -94,11 +96,14 @@ func (ctx *Context) JSON(code int, body any) {
 	}
 }
 
-func (ctx *Context) HTML(code int, html string) {
+// TODO:
+func (ctx *Context) HTML(code int, name string, data interface{}) {
 	ctx.SetHeader("Content-Type", "text/html")
 	ctx.Status(code)
 	ctx.SetDate(time.Now().Local())
-	_, _ = ctx.Res.Write([]byte(html))
+	if err := ctx.engine.htmpls.ExecuteTemplate(ctx.Res, name, data); err != nil {
+		ctx.Fail(http.StatusInternalServerError, err.Error())
+	}
 }
 
 func (ctx *Context) Fail(code int, err string) {

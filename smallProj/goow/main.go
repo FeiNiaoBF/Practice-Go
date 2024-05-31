@@ -1,98 +1,62 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"html/template"
 	"net/http"
 	"time"
 
 	"github.com/FeiNiaoBF/Practice-Go/smallProj/goow/goow"
 )
 
+type student struct {
+	Name string
+	Age  int8
+}
+
+func FormatAsDate(t time.Time) string {
+	year, month, day := t.Date()
+	return fmt.Sprintf("%d-%02d-%02d", year, month, day)
+}
+
 func main() {
 	r := goow.New()
 	r.Use(goow.Logger())
-	r.GET("/", func(ctx *goow.Context) {
-		ctx.HTML(http.StatusOK, "<h1>There Goow</h1>")
+	r.SetFuncMap(template.FuncMap{
+		"FormatAsDate": FormatAsDate,
 	})
+	r.LoadHTMLGlob("public/template/*")
+	r.Static("/assets", "public/static")
 
-	r.GET("/hello", func(ctx *goow.Context) {
-		ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Query("name"), ctx.Path)
+	stu1 := &student{Name: "Steve", Age: 20}
+	stu2 := &student{Name: "Jack", Age: 22}
+	r.GET("/", func(c *goow.Context) {
+		c.HTML(http.StatusOK, "css.tmpl", nil)
 	})
-
-	r.POST("/login", func(ctx *goow.Context) {
-		ctx.JSON(http.StatusOK, goow.H{
-			"username": ctx.PostForm("username"),
-			"password": ctx.PostForm("password"),
+	r.GET("/students", func(c *goow.Context) {
+		c.HTML(http.StatusOK, "arr.tmpl", goow.H{
+			"title":  "goow",
+			"stuArr": [2]*student{stu1, stu2},
 		})
 	})
 
-	r.GET("/hello/:name", func(ctx *goow.Context) {
-		ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Param("name"), ctx.Path)
+	r.GET("/date", func(c *goow.Context) {
+		c.HTML(http.StatusOK, "custom_func.tmpl", goow.H{
+			"title": "goow",
+			"now":   time.Now().Local().Format("2006-01-02 15:04:05"),
+		})
 	})
 
-	r.GET("/assets/*filepath", func(ctx *goow.Context) {
-		ctx.JSON(http.StatusOK, goow.H{"filepath": ctx.Param("filepath")})
-	})
-
-	r.GET("/String", func(ctx *goow.Context) {
-		ctx.String(http.StatusOK, "hello Goow")
-	})
-
-	// GROUP BY
-	v1 := r.Group("/g1")
-	//v1.Use(loggerv2())
-	{
-		v1.GET("/", func(c *goow.Context) {
-			c.HTML(http.StatusOK, "<h1>Hello g1 </h1>")
-		})
-
-		v1.GET("/hello", func(c *goow.Context) {
-			// expect /hello?name=geektutu
-			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
-		})
-	}
-	v2 := r.Group("/g2")
-	v2.Use(loggerv2())
-	{
-		v2.GET("/hello/:name", func(c *goow.Context) {
-			// expect /hello/geektutu
-			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
-		})
-		v2.POST("/login", func(c *goow.Context) {
-			c.JSON(http.StatusOK, goow.H{
-				"username": c.PostForm("username"),
-				"password": c.PostForm("password"),
-			})
-		})
-
-	}
-
-	r.Run(":9999")
-	//r := goow.New()
-	//r.Use(goow.Logger()) // global midlleware
-	//r.GET("/", func(c *goow.Context) {
-	//	c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
-	//})
-	//
-	//v2 := r.Group("/v2")
-	//v2.Use(loggerv2()) // v2 group middleware
-	//{
-	//	v2.GET("/hello/:name", func(c *goow.Context) {
-	//		// expect /hello/geektutu
-	//		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
-	//	})
-	//}
-	//
-	//r.Run(":9999")
+	r.Run(":1314")
 }
 
-func loggerv2() goow.HandlerFunc {
-	return func(c *goow.Context) {
-		// Start timer
-		t := time.Now()
-		// if a server error occurred
-		c.Fail(500, "Internal Server Error")
-		// Calculate resolution time
-		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
-	}
-}
+//func loggerv2() goow.HandlerFunc {
+//	return func(c *goow.Context) {
+//		// Start timer
+//		t := time.Now()
+//		// if a server error occurred
+//		c.Fail(500, "Internal Server Error")
+//		// Calculate resolution time
+//		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+//	}
+//}
