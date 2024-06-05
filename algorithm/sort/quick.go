@@ -1,13 +1,22 @@
 package sort
 
+// time complexity: O(nlogn)
+// space complexity: O(n)
 func QuickSort(nums []int, left, right int) {
 	if left >= right {
 		return
 	}
 
-	pivot := partition(nums, left, right)
-	QuickSort(nums, left, pivot)
-	QuickSort(nums, pivot+1, right)
+	for left < right {
+		pivot := partition(nums, left, right)
+		if pivot-left < right-pivot {
+			QuickSort(nums, left, pivot)
+			left = pivot + 1
+		} else {
+			QuickSort(nums, pivot+1, right)
+			right = pivot - 1
+		}
+	}
 }
 
 func partition(nums []int, left, right int) int {
