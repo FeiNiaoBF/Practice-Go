@@ -4,6 +4,7 @@ func HeapSort(nums *[]int) {
 	size := len(*nums)
 
 	// build max heap
+	// 不从根节点开始
 	for i := size/2 - 1; i >= 0; i-- {
 		heapfiy(nums, size, i)
 	}
