@@ -15,17 +15,32 @@ func BucketSort(nums []int) {
 		}
 	}
 
-	bucket := make([]int, max-min+1)
-	for i := 0; i < len(nums); i++ {
-		bucket[nums[i]-min]++
-	}
+ // 计算桶的数量
+ k := max - min + 1
 
-	index := 0
-	for i := 0; i < len(bucket); i++ {
-		for bucket[i] > 0 {
-			nums[index] = i + min
-			index++
-			bucket[i]--
-		}
-	}
+ // 初始化桶
+ bucket := make([][]int, k)
+ for i := range bucket {
+	 bucket[i] = make([]int, 0)
+ }
+
+ // 将元素分配到桶中
+ for _, num := range nums {
+	 index := num - min
+	 bucket[index] = append(bucket[index], num)
+ }
+
+ // 对每个桶内的元素进行排序
+ for _, b := range bucket {
+	 Insertion(b)
+ }
+
+ // 合并桶中的元素
+ index := 0
+ for _, b := range bucket {
+	 for _, num := range b {
+		 nums[index] = num
+		 index++
+	 }
+ }
 }
