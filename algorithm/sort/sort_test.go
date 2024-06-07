@@ -68,6 +68,17 @@ func TestHeapSort(t *testing.T) {
 	}
 }
 
+func TestBucketSort(t *testing.T) {
+	nums := []int{5, 3, 4, 1, 2}
+	BucketSort(nums)
+
+	for i := 0; i < len(nums)-1; i++ {
+		if nums[i] > nums[i+1] {
+			t.Errorf("HeapSort failed: %v", nums)
+		}
+	}
+}
+
 // benchmark
 
 var NUMS []int
@@ -109,5 +120,11 @@ func BenchmarkMerge(b *testing.B) {
 func BenchmarkHeap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		HeapSort(&NUMS)
+	}
+}
+
+func BenchmarkBucket(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		BucketSort(NUMS)
 	}
 }
