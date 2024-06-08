@@ -1,6 +1,6 @@
 package sort
 
-func BucketSort(nums []int) {
+func BucketSort(nums []int, bucketSize int) {
 	if len(nums) == 0 {
 		return
 	}
@@ -15,32 +15,26 @@ func BucketSort(nums []int) {
 		}
 	}
 
- // 计算桶的数量
- k := max - min + 1
+	// 计算桶的数量
+	bucketCount := (max-min)/bucketSize + 1
 
- // 初始化桶
- bucket := make([][]int, k)
- for i := range bucket {
-	 bucket[i] = make([]int, 0)
- }
+	// 初始化桶
+	buckets := make([][]int, bucketCount)
+	for i := range buckets {
+		buckets[i] = make([]int, 0)
+	}
 
- // 将元素分配到桶中
- for _, num := range nums {
-	 index := num - min
-	 bucket[index] = append(bucket[index], num)
- }
+	// 将元素分配到桶中
+	for _, num := range nums {
+		index := (num - min) / bucketSize
+		buckets[index] = append(buckets[index], num)
+	}
 
- // 对每个桶内的元素进行排序
- for _, b := range bucket {
-	 Insertion(b)
- }
-
- // 合并桶中的元素
- index := 0
- for _, b := range bucket {
-	 for _, num := range b {
-		 nums[index] = num
-		 index++
-	 }
- }
+    index := 0
+    for _, bucket := range buckets {
+        for _, num := range bucket {
+            nums[index] = num
+            index++
+        }
+    }
 }

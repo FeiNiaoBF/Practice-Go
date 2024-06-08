@@ -1,6 +1,9 @@
 package sort
 
-import "testing"
+import (
+	"sort"
+	"testing"
+)
 
 func TestSelection(t *testing.T) {
 	nums := []int{5, 3, 4, 1, 2}
@@ -70,11 +73,22 @@ func TestHeapSort(t *testing.T) {
 
 func TestBucketSort(t *testing.T) {
 	nums := []int{5, 3, 4, 1, 2}
-	BucketSort(nums)
+	BucketSort(nums, 2)
 
 	for i := 0; i < len(nums)-1; i++ {
 		if nums[i] > nums[i+1] {
 			t.Errorf("HeapSort failed: %v", nums)
+		}
+	}
+}
+
+func TestConutSort(t *testing.T) {
+	nums := []int{5, 3, 4, 1, 2}
+	ConutSort(nums)
+
+	for i := 0; i < len(nums)-1; i++ {
+		if nums[i] > nums[i+1] {
+			t.Errorf("ConutSort failed: %v", nums)
 		}
 	}
 }
@@ -85,6 +99,12 @@ var NUMS []int
 
 func init(){
 	NUMS = RandNums(10000)
+}
+
+func BenchmarkGOSORT(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		sort.Ints(NUMS)
+	}
 }
 
 func BenchmarkSelection(b *testing.B) {
@@ -125,6 +145,12 @@ func BenchmarkHeap(b *testing.B) {
 
 func BenchmarkBucket(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		BucketSort(NUMS)
+		BucketSort(NUMS, 5)
+	}
+}
+
+func BenchmarkConut(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ConutSort(NUMS)
 	}
 }
