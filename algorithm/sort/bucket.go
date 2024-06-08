@@ -1,5 +1,7 @@
 package sort
 
+import "sort"
+
 func BucketSort(nums []int, bucketSize int) {
 	if len(nums) == 0 {
 		return
@@ -29,7 +31,10 @@ func BucketSort(nums []int, bucketSize int) {
 		index := (num - min) / bucketSize
 		buckets[index] = append(buckets[index], num)
 	}
-
+	// 对每个桶内的元素进行排序
+	for _, bucket := range buckets {
+		sort.Ints(bucket)
+	}
     index := 0
     for _, bucket := range buckets {
         for _, num := range bucket {

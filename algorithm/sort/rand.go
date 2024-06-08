@@ -17,7 +17,7 @@ func init() {
 func RandNums(num int) (result []int) {
 	result = make([]int, num)
 	for i := 0; i < num; i++ {
-		result[i] = randNums.Intn(1000)
+		result[i] = randNums.Intn(101)
 	}
 	return
 }
