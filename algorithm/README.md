@@ -60,9 +60,9 @@
 
   - [ ] [1. 归并排序（Mergesort）](https://www.coursera.org/lecture/algorithms-part1/mergesort-ARWDq)
   - [ ] [2. 自底向上的归并排序（Bottom up Mergesort）](https://www.coursera.org/learn/algorithms-part1/lecture/PWNEl/bottom-up-mergesort)
-  - [ ] [3. 排序复杂性（Sorting Complexity）](https://www.coursera.org/lecture/algorithms-part1/sorting-complexity-xAltF)
+  - [x] [3. 排序复杂性（Sorting Complexity）](https://www.coursera.org/lecture/algorithms-part1/sorting-complexity-xAltF)
   - [ ] [4. 比较器（Comparators）](https://www.coursera.org/lecture/algorithms-part1/comparators-9FYhS)
-  - [ ] [5. 稳定性（Stability）](https://www.coursera.org/learn/algorithms-part1/lecture/pvvLZ/stability)
+  - [x] [5. 稳定性（Stability）](https://www.coursera.org/learn/algorithms-part1/lecture/pvvLZ/stability)
 
 - [ ] [Sedgewick ── 快速排序（4 个视频）](https://www.coursera.org/learn/algorithms-part1/home/week/3)
 
@@ -79,7 +79,7 @@
   - [ ] [CS 61B Lecture 33：排序 V（视频）](https://archive.org/details/ucberkeley_webcast_qNMQ4ly43p4)
   - [ ] [CS 61B 2014-04-21：基数排序（视频）](https://archive.org/details/ucberkeley_webcast_pvbBMd-3NoI)
 
-- [ ] [冒泡排序（视频）](https://www.youtube.com/watch?v=P00xJgWzz2c&index=1&list=PL89B61F78B552C1AB)
+- [x] [冒泡排序（视频）](https://www.youtube.com/watch?v=P00xJgWzz2c&index=1&list=PL89B61F78B552C1AB)
 - [ ] [冒泡排序分析（视频）](https://www.youtube.com/watch?v=ni_zk257Nqo&index=7&list=PL89B61F78B552C1AB)
 - [ ] [插入排序 & 归并排序（视频）](https://www.youtube.com/watch?v=Kg4bqzAqRBM&index=3&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb)
 - [ ] [插入排序（视频）](https://www.youtube.com/watch?v=c4BRHC7kTaQ&index=2&list=PL89B61F78B552C1AB)
@@ -95,21 +95,21 @@
 
   - [ ] [实现（C 语言）](http://www.cs.yale.edu/homes/aspnes/classes/223/examples/randomization/quick.c)
   - [ ] [实现（C 语言）](https://github.com/jwasham/practice-c/blob/master/quick_sort/quick_sort.c)
-  - [ ] [实现（Python 语言）](https://github.com/jwasham/practice-python/blob/master/quick_sort/quick_sort.py)
+  - [x] [实现（Python 语言）](https://github.com/jwasham/practice-python/blob/master/quick_sort/quick_sort.py)
 
-- [ ] [[Review] Sorting (playlist) in 18 minutes](https://www.youtube.com/playlist?list=PL9xmBV_5YoZOZSbGAXAPIq1BeUf4j20pl)
+- [x] [[Review] Sorting (playlist) in 18 minutes](https://www.youtube.com/playlist?list=PL9xmBV_5YoZOZSbGAXAPIq1BeUf4j20pl)
 
-  - [ ] [Quick sort in 4 minutes (video)](https://youtu.be/Hoixgm4-P4M)
-  - [ ] [Heap sort in 4 minutes (video)](https://youtu.be/2DmK_H7IdTo)
-  - [ ] [Merge sort in 3 minutes (video)](https://youtu.be/4VqmGXwpLqc)
-  - [ ] [Bubble sort in 2 minutes (video)](https://youtu.be/xli_FI7CuzA)
-  - [ ] [Selection sort in 3 minutes (video)](https://youtu.be/g-PGLbMth_g)
-  - [ ] [Insertion sort in 2 minutes (video)](https://youtu.be/JU767SDMDvA)
+  - [x] [Quick sort in 4 minutes (video)](https://youtu.be/Hoixgm4-P4M)
+  - [x] [Heap sort in 4 minutes (video)](https://youtu.be/2DmK_H7IdTo)
+  - [x] [Merge sort in 3 minutes (video)](https://youtu.be/4VqmGXwpLqc)
+  - [x] [Bubble sort in 2 minutes (video)](https://youtu.be/xli_FI7CuzA)
+  - [x] [Selection sort in 3 minutes (video)](https://youtu.be/g-PGLbMth_g)
+  - [x] [Insertion sort in 2 minutes (video)](https://youtu.be/JU767SDMDvA)
 
-- [ ] 实现:
+- [x] 实现:
 
-  - [ ] 归并：平均和最差情况的时间复杂度为 O(n log n)。
-  - [ ] 快排：平均时间复杂度为 O(n log n)。
+  - [x] 归并：平均和最差情况的时间复杂度为 O(n log n)。
+  - [x] 快排：平均时间复杂度为 O(n log n)。
   - 选择排序和插入排序的最坏、平均时间复杂度都是 O(n^2)。
   - 关于堆排序，请查看前文堆的数据结构部分。
 
@@ -121,9 +121,9 @@
     - [ ] [4. Most Significant Digit First String Radix Sort](https://www.coursera.org/learn/algorithms-part2/lecture/gFxwG/msd-radix-sort)
     - [ ] [5. 3 中基数快速排序](https://www.coursera.org/learn/algorithms-part2/lecture/crkd5/3-way-radix-quicksort)
     - [ ] [6. 后继数组（Suffix Arrays）](https://www.coursera.org/learn/algorithms-part2/lecture/TH18W/suffix-arrays)
-  - [ ] [基数排序](http://www.cs.yale.edu/homes/aspnes/classes/223/notes.html#radixSort)
-  - [ ] [基数排序（视频）](https://www.youtube.com/watch?v=xhr26ia4k38)
-  - [ ] [基数排序, 计数排序 (线性时间内)（视频）](https://www.youtube.com/watch?v=Nz1KZXbghj8&index=7&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb)
+  - [x] [基数排序](http://www.cs.yale.edu/homes/aspnes/classes/223/notes.html#radixSort)
+  - [x] [基数排序（视频）](https://www.youtube.com/watch?v=xhr26ia4k38)
+  - [x] [基数排序, 计数排序 (线性时间内)（视频）](https://www.youtube.com/watch?v=Nz1KZXbghj8&index=7&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb)
   - [ ] [随机算法: 矩阵相乘, 快排, Freivalds' 算法（视频）](https://www.youtube.com/watch?v=cNB2lADK3_s&index=8&list=PLUl4u3cNGP6317WaSNfmCvGym2ucw3oGp)
   - [ ] [线性时间内的排序（视频）](https://www.youtube.com/watch?v=pOKy3RZbSws&list=PLUl4u3cNGP61hsJNdULdudlRL493b-XZf&index=14)
 
