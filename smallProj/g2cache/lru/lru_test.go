@@ -7,7 +7,7 @@ import (
 
 func TestGet(t *testing.T) {
 	key1 := "key1"
-	lru := New(0)
+	lru := New(0, nil)
 	lru.Add(key1, 1)
 	val, ok := lru.Get(key1)
 	if !ok {
@@ -20,7 +20,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestRemove(t *testing.T) {
-	lru := New(0)
+	lru := New(0, nil)
 	lru.Add("myKey", 1234)
 	if val, ok := lru.Get("myKey"); !ok {
 		t.Fatal("TestRemove returned no match")
@@ -39,8 +39,7 @@ func TestOnEvicted(t *testing.T) {
 	callback := func(key Key, value any) {
 		keys = append(keys, key)
 	}
-	lru := New(10)
-	lru.OnEvicted = callback
+	lru := New(10, callback)
 	for i := 0; i < 12; i++ {
 		lru.Add(fmt.Sprintf("myKey%d", i), i)
 	}

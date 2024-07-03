@@ -17,17 +17,20 @@ type entry struct {
 	value any
 }
 
-
-func New(maxEntries int) *Cache {
+// New creates a new Cache.
+// If maxEntries is zero, the cache has no limit and it is effectively unbounded.
+// If onEvicted is nil, no event will be triggered when an entry is deleted.
+func New(maxEntries int, onEvicted func(key Key, value any)) *Cache {
 	return &Cache{
 		MaxEntries: maxEntries,
 		NEntries: 0,
 		ll:         list.New(),
 		cache:      make(map[any]*list.Element),
+		OnEvicted:  onEvicted,
 	}
 }
 
-func (c *Cache) Add(key string, value any) {
+func (c *Cache) Add(key Key, value any) {
 	if c.cache == nil {
 		c.cache = make(map[any]*list.Element)
 		c.ll = list.New()
@@ -48,7 +51,7 @@ func (c *Cache) Add(key string, value any) {
 	}
 }
 
-func (c *Cache) Get(key string) (value any, ok bool) {
+func (c *Cache) Get(key Key) (value any, ok bool) {
 	if c.cache == nil {
 		return
 	}
@@ -60,7 +63,7 @@ func (c *Cache) Get(key string) (value any, ok bool) {
 	return
 }
 
-
+// Remove removes the provided key from the cache.
 func (c *Cache) Remove(key Key) {
 	if c.cache == nil {
 		return
@@ -70,6 +73,7 @@ func (c *Cache) Remove(key Key) {
 	}
 }
 
+// RemoveOldest removes the oldest item from the cache.
 func (c *Cache) RemoveOldest() {
 	ele := c.ll.Back()
 	if ele != nil {
@@ -91,7 +95,7 @@ func (c *Cache) Len() int {
 	if c.cache == nil {
 		return 0
 	}
-	return c.ll.Len()
+	return c.NEntries
 }
 
 func (c *Cache) Clear() {
