@@ -30,6 +30,7 @@ func New(maxEntries int, onEvicted func(key Key, value any)) *Cache {
 	}
 }
 
+// Add add and update the cache for a key-value pair.
 func (c *Cache) Add(key Key, value any) {
 	if c.cache == nil {
 		c.cache = make(map[any]*list.Element)

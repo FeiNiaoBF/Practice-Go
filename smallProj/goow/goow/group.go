@@ -16,7 +16,7 @@ type RouterGroup struct {
 func newRouterGroup(prefix string, parent *RouterGroup, engine *Engine) *RouterGroup {
 	return &RouterGroup{
 		prefix: prefix,
-		// parent: parent,
+		parent: parent,
 		engine: engine,
 	}
 }
