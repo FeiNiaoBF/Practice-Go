@@ -2,22 +2,32 @@ package g2cache
 
 import (
 	"fmt"
+	"g2cache/consistenthash"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
+	"sync"
 )
 
 // http 请求处理其他节点的请求
 // 1. 通过http请求获取其他节点的数据
 // 2. 通过http请求删除其他节点的数据
 
-const defaultBasePath = "/_g2cache/"
+const (
+	defaultBasePath = "/_g2cache/"
+	defaultReplicas = 50
+)
 
 type HTTPPool struct {
 	// this peer's base URL, e.g. "https://example.net:8000"
 	self string
 	// this peer's base path for g2cache HTTP requests
-	basePath string
+	basePath    string
+	mu          sync.Mutex
+	peers       *consistenthash.Map
+	httpGetters map[string]*httpGetter
 }
 
 // NewHTTPPool creates a new HTTPPool instance.
@@ -64,3 +74,64 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Write(view.ByteSlice())
 }
+
+// Set updates the pool's list of peers.
+// 加入新的节点
+func (p *HTTPPool) Set(peers ...string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	// lazy load peers
+	if p.peers == nil {
+		p.peers = consistenthash.New(defaultReplicas, nil)
+	}
+	p.peers.Add(peers...)
+	p.httpGetters = make(map[string]*httpGetter, len(peers))
+	for _, peer := range peers {
+		p.httpGetters[peer] = &httpGetter{baseURL: peer + p.basePath}
+	}
+}
+
+// PickPeer 从集群中根据 key 选择节点
+func (p *HTTPPool) PickPeer(key string) (PeerGetter, bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if peer := p.peers.Get(key); peer != "" && peer != p.self {
+		p.Logf("Pick peer: %s", peer)
+		return p.httpGetters[peer], true
+	}
+	return nil, false
+}
+
+var _ PeerPicker = (*HTTPPool)(nil)
+
+type httpGetter struct {
+	baseURL string
+}
+
+func (h *httpGetter) Get(group string, key string) ([]byte, error) {
+	u := fmt.Sprintf(
+		"%v%v/%v",
+		h.baseURL,
+		url.QueryEscape(group),
+		url.QueryEscape(key), // 防止 key 中有特殊字符
+	)
+
+	res, err := http.Get(u)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("server returned: %v", res.Status)
+	}
+
+	bytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading response body: %v", err)
+	}
+
+	return bytes, nil
+}
+
+var _ PeerGetter = (*httpGetter)(nil)

@@ -30,6 +30,7 @@ type Group struct {
 	name      string
 	getter    Getter
 	mainCache cache
+	peers     PeerPicker
 }
 
 // NewGroup create a new instance of Group
@@ -71,7 +72,25 @@ func (g *Group) Get(key string) (ByteView, error) {
 	return g.load(key)
 }
 
+// RegisterPeers registers a PeerPicker for choosing remote peer
+func (g *Group) RegisterPeers(peers PeerPicker) {
+	if g.peers != nil {
+		panic("RegisterPeerPicker called more than once")
+	}
+	g.peers = peers
+}
+
+// load 从数据源获取数据
+// load 不会告诉使用者，key-value pair 是从哪个节点来的
 func (g *Group) load(key string) (value ByteView, err error) {
+	if g.peers != nil {
+		if peer, ok := g.peers.PickPeer(key); ok {
+			if value, err = g.getFromPeer(peer, key); err == nil {
+				return value, nil
+			}
+			log.Println("[G2Cache] Failed to get from peer", err)
+		}
+	}
 	return g.getLocally(key)
 }
 
@@ -85,7 +104,16 @@ func (g *Group) getLocally(key string) (ByteView, error) {
 	g.populateCache(key, value)
 	return value, nil
 }
+
 // populateCache 将源数据添加到缓存 mainCache
 func (g *Group) populateCache(key string, value ByteView) {
 	g.mainCache.add(key, value)
+}
+
+func (g *Group) getFromPeer(peer PeerGetter, key string) (ByteView, error) {
+	bytes, err := peer.Get(g.name, key)
+	if err != nil {
+		return ByteView{}, err
+	}
+	return ByteView{b: cloneBytes(bytes)}, nil
 }

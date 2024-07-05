@@ -80,3 +80,35 @@ func TestServeHttp(t *testing.T) {
 	}
 
 }
+
+// Test HttpGetter
+
+func TestHttpGetter_Get(t *testing.T) {
+	// Create a mock server
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/_g2cache/testgroup/foo" {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+
+		w.Write([]byte("bar"))
+	}))
+
+	defer server.Close()
+	t.Logf("server.URL: %s", server.URL)
+
+	// Create a new httpGetter instance
+	getter := &httpGetter{baseURL: server.URL + "/_g2cache/"}
+
+	// Get the value
+	value, err := getter.Get("testgroup", "foo")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Check the value
+	expected := "bar"
+	if string(value) != expected {
+		t.Errorf("getter returned unexpected value: got %v want %v", string(value), expected)
+	}
+}
