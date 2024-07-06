@@ -2,6 +2,7 @@ package g2cache
 
 import (
 	"fmt"
+	"g2cache/singleflight"
 	"log"
 	"sync"
 )
@@ -31,12 +32,14 @@ type Group struct {
 	getter    Getter
 	mainCache cache
 	peers     PeerPicker
+	loader    *singleflight.Group
 }
 
 // NewGroup create a new instance of Group
 func NewGroup(name string, cacheBytes int64, getter Getter) *Group {
 	if getter == nil {
-		panic("nil Getter")
+		log.Fatal("nil Getter")
+		// panic("nil Getter")
 	}
 	mu.Lock()
 	defer mu.Unlock()
@@ -44,6 +47,7 @@ func NewGroup(name string, cacheBytes int64, getter Getter) *Group {
 		name:      name,
 		getter:    getter,
 		mainCache: cache{cacheBytes: cacheBytes},
+		loader:    new(singleflight.Group),
 	}
 	groups[name] = g
 	return g
@@ -83,15 +87,22 @@ func (g *Group) RegisterPeers(peers PeerPicker) {
 // load 从数据源获取数据
 // load 不会告诉使用者，key-value pair 是从哪个节点来的
 func (g *Group) load(key string) (value ByteView, err error) {
-	if g.peers != nil {
-		if peer, ok := g.peers.PickPeer(key); ok {
-			if value, err = g.getFromPeer(peer, key); err == nil {
-				return value, nil
+
+	viewi, err := g.loader.Do(key, func() (interface{}, error) {
+		if g.peers != nil {
+			if peer, ok := g.peers.PickPeer(key); ok {
+				if value, err = g.getFromPeer(peer, key); err == nil {
+					return value, nil
+				}
+				log.Println("[G2Cache] Failed to get from peer", err)
 			}
-			log.Println("[G2Cache] Failed to get from peer", err)
 		}
+		return g.getLocally(key)
+	})
+	if err != nil {
+		return ByteView{}, err
 	}
-	return g.getLocally(key)
+	return viewi.(ByteView), nil
 }
 
 func (g *Group) getLocally(key string) (ByteView, error) {

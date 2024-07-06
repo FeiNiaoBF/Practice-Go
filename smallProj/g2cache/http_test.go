@@ -95,7 +95,7 @@ func TestHttpGetter_Get(t *testing.T) {
 	}))
 
 	defer server.Close()
-	t.Logf("server.URL: %s", server.URL)
+	t.Logf("server.URL: %s", server.URL+server.Config.Addr)
 
 	// Create a new httpGetter instance
 	getter := &httpGetter{baseURL: server.URL + "/_g2cache/"}
