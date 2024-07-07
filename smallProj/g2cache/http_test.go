@@ -2,6 +2,7 @@ package g2cache
 
 import (
 	"fmt"
+	pb "g2cache/g2cachepb/g2cachepb"
 	"io"
 	"log"
 	"net/http"
@@ -93,7 +94,7 @@ func TestHttpGetter_Get(t *testing.T) {
 
 		w.Write([]byte("bar"))
 	}))
-
+   
 	defer server.Close()
 	t.Logf("server.URL: %s", server.URL)
 
@@ -101,14 +102,17 @@ func TestHttpGetter_Get(t *testing.T) {
 	getter := &httpGetter{baseURL: server.URL + "/_g2cache/"}
 
 	// Get the value
-	value, err := getter.Get("testgroup", "foo")
+
+	in := &pb.Request{Group: "testgroup", Key: "foo"}
+	out := &pb.Response{}
+	err := getter.Get(in, out)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Check the value
 	expected := "bar"
-	if string(value) != expected {
-		t.Errorf("getter returned unexpected value: got %v want %v", string(value), expected)
+	if string(out.GetValue()) != expected {
+		t.Errorf("getter returned unexpected value: got %v want %v", string(out.GetValue()), expected)
 	}
 }
