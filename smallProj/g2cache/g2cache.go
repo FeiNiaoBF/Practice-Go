@@ -5,6 +5,8 @@ import (
 	"g2cache/singleflight"
 	"log"
 	"sync"
+
+	pb "g2cache/g2cachepb/g2cachepb"
 )
 
 // Getter 用于从数据源获取数据
@@ -122,9 +124,15 @@ func (g *Group) populateCache(key string, value ByteView) {
 }
 
 func (g *Group) getFromPeer(peer PeerGetter, key string) (ByteView, error) {
-	bytes, err := peer.Get(g.name, key)
+
+	req := &pb.Request{
+		Group: g.name,
+		Key:   key,
+	}
+	res := &pb.Response{}
+	err := peer.Get(req, res)
 	if err != nil {
 		return ByteView{}, err
 	}
-	return ByteView{b: cloneBytes(bytes)}, nil
+	return ByteView{b: cloneBytes(res.Value)}, nil
 }
