@@ -2,18 +2,26 @@ package session
 
 import (
 	"database/sql"
+	"foorm/dialect"
 	"foorm/log"
+	"foorm/schema"
 	"strings"
 )
 
+// Session 核心功能是与数据库进行交互
 type Session struct {
-	db      *sql.DB
-	sql     strings.Builder // SQL 语句
-	sqlVars []interface{}   // SQL 语句变量
+	db       *sql.DB
+	dialect  dialect.Dialect
+	refTable *schema.Schema
+	sql      strings.Builder // SQL 语句
+	sqlVars  []interface{}   // SQL 语句变量
 }
 
-func New(db *sql.DB) *Session {
-	return &Session{db: db}
+func New(db *sql.DB, dialect dialect.Dialect) *Session {
+	return &Session{
+		db:      db,
+		dialect: dialect,
+	}
 }
 
 func (s *Session) Clear() {
