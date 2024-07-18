@@ -27,7 +27,7 @@ func init() {
 // genBindVars return a string of num value ? of ASCII
 // num is 2, s is "?, ?"
 func genBindVars(num int) string {
-	var vars = make([]string, num)
+	var vars = make([]string, 0, num)
 	for i := 0; i < num; i++ {
 		vars = append(vars, "?")
 	}
@@ -39,7 +39,7 @@ func _insert(values ...any) (string, []any) {
 	// INSERT INTO $TABLE (fields) ...
 	lognil(values)
 	table := values[0]
-	fields := strings.Join(values[1].([]string), ",")
+	fields := strings.Join(values[1].([]string), ", ")
 	return fmt.Sprintf("INSERT INTO %s (%v)", table, fields), []any{}
 }
 
@@ -48,21 +48,26 @@ func _values(values ...any) (string, []any) {
 	lognil(values)
 	// VALUES ($v1), ($v2)...
 	// "('Jack', 18), ('Tom', 20)"
-	var vars = make([]any, len(values))
+	var vars []any
 	var builder strings.Builder
 	var bindStr string
+
 	builder.WriteString("VALUES ")
 	for i, val := range values {
 		v := val.([]any)
+
 		if bindStr == "" {
 			bindStr = genBindVars(len(v))
+
 		}
 		builder.WriteString(fmt.Sprintf("(%v)", bindStr))
+
 		if i+1 != len(values) {
 			builder.WriteString(", ")
 		}
 		vars = append(vars, v...)
 	}
+
 	return builder.String(), vars
 }
 
