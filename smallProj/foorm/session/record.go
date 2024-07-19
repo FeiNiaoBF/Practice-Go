@@ -1,6 +1,7 @@
 package session
 
 import (
+	"errors"
 	"foorm/clause"
 	"reflect"
 )
@@ -50,4 +51,82 @@ func (s *Session) Find(val any) error {
 		destSlice.Set(reflect.Append(destSlice, dest))
 	}
 	return rows.Close()
+}
+
+// First 只返回一条记录
+func (s *Session) First(value any) error {
+	dest := reflect.Indirect(reflect.ValueOf(value))
+	destSlice := reflect.New(reflect.SliceOf(dest.Type())).Elem()
+	if err := s.Limit(1).Find(destSlice.Addr().Interface()); err != nil {
+		return err
+	}
+	if destSlice.Len() == 0 {
+		return errors.New("not found")
+	}
+	dest.Set(destSlice.Index(0))
+	return nil
+}
+
+// Update 传入需要修改的map[string]any,或者k1,v1,k2,v2...
+func (s *Session) Update(kv ...any) (int64, error) {
+	m, ok := kv[0].(map[string]any)
+	if !ok && len(kv)%2 == 0 {
+		m = make(map[string]any)
+		for i := 0; i < len(kv); i += 2 {
+			m[kv[i].(string)] = kv[i+1]
+		}
+	}
+
+	s.clause.Set(clause.UPDATE, s.RefTable().Name, m)
+	builder, vars := s.clause.Build(clause.UPDATE, clause.WHERE)
+	result, err := s.Raw(builder, vars...).Exec()
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+// Delete records with where clause
+func (s *Session) Delete() (int64, error) {
+	s.clause.Set(clause.DELETE, s.RefTable().Name)
+	builder, vars := s.clause.Build(clause.DELETE, clause.WHERE)
+	result, err := s.Raw(builder, vars...).Exec()
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+// Count 返回计算数据库表中的记录数量
+func (s *Session) Count() (int64, error) {
+	s.clause.Set(clause.COUNT, s.RefTable().Name)
+	builder, vars := s.clause.Build(clause.COUNT, clause.WHERE)
+	row := s.Raw(builder, vars...).QueryRow()
+	var tmp int64
+	if err := row.Scan(&tmp); err != nil {
+		return 0, err
+	}
+	return tmp, nil
+}
+
+// 链式调用(chain), 不会返回具体的值，因为在SQL中，以下的都是语句中的一部分子句，
+// 不能构成一个完整的语句
+
+// Limit adds limit condition to clause
+func (s *Session) Limit(num int) *Session {
+	s.clause.Set(clause.LIMIT, num)
+	return s
+}
+
+// Where adds limit condition to clause
+func (s *Session) Where(desc string, args ...any) *Session {
+	var vars []any
+	s.clause.Set(clause.WHERE, append(append(vars, desc), args...)...)
+	return s
+}
+
+// OrderBy adds order by condition to clause
+func (s *Session) OrderBy(desc string) *Session {
+	s.clause.Set(clause.ORDERBY, desc)
+	return s
 }

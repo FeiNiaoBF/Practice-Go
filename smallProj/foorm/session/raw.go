@@ -36,7 +36,7 @@ func (s *Session) DB() *sql.DB {
 	return s.db
 }
 
-func (s *Session) Raw(sql string, values ...interface{}) *Session {
+func (s *Session) Raw(sql string, values ...any) *Session {
 	s.sql.WriteString(sql)
 	s.sql.WriteString(" ")
 	s.sqlVars = append(s.sqlVars, values...)
