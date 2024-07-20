@@ -10,23 +10,25 @@ import (
 func (s *Session) Insert(values ...any) (int64, error) {
 	recordValues := make([]any, 0)
 	for _, value := range values {
+		s.CallMethod(BeforeInsert, value)
 		table := s.Model(value).RefTable()
 		s.clause.Set(clause.INSERT, table.Name, table.FieldNames)
 		recordValues = append(recordValues, table.RecordValues(value))
 	}
 
 	s.clause.Set(clause.VALUES, recordValues...)
-	sql, vars := s.clause.Build(clause.INSERT, clause.VALUES)
-	result, err := s.Raw(sql, vars...).Exec()
+	builder, vars := s.clause.Build(clause.INSERT, clause.VALUES)
+	result, err := s.Raw(builder, vars...).Exec()
 	if err != nil {
 		return 0, err
 	}
-
+	s.CallMethod(AfterInsert, nil)
 	return result.RowsAffected()
 }
 
 // Find 传入一个结构体切片指针，查询的结果保存在切片中
 func (s *Session) Find(val any) error {
+	s.CallMethod(BeforeQuery, nil)
 	destSlice := reflect.Indirect(reflect.ValueOf(val))
 	typ := destSlice.Type().Elem()
 
@@ -48,6 +50,7 @@ func (s *Session) Find(val any) error {
 		if err := rows.Scan(values...); err != nil {
 			return err
 		}
+		s.CallMethod(AfterQuery, dest.Addr().Interface())
 		destSlice.Set(reflect.Append(destSlice, dest))
 	}
 	return rows.Close()
@@ -69,6 +72,7 @@ func (s *Session) First(value any) error {
 
 // Update 传入需要修改的map[string]any,或者k1,v1,k2,v2...
 func (s *Session) Update(kv ...any) (int64, error) {
+	s.CallMethod(BeforeUpdate, nil)
 	m, ok := kv[0].(map[string]any)
 	if !ok && len(kv)%2 == 0 {
 		m = make(map[string]any)
@@ -83,17 +87,20 @@ func (s *Session) Update(kv ...any) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	s.CallMethod(AfterUpdate, nil)
 	return result.RowsAffected()
 }
 
 // Delete records with where clause
 func (s *Session) Delete() (int64, error) {
+	s.CallMethod(BeforeDelete, nil)
 	s.clause.Set(clause.DELETE, s.RefTable().Name)
 	builder, vars := s.clause.Build(clause.DELETE, clause.WHERE)
 	result, err := s.Raw(builder, vars...).Exec()
 	if err != nil {
 		return 0, err
 	}
+	s.CallMethod(AfterDelete, nil)
 	return result.RowsAffected()
 }
 

@@ -12,7 +12,7 @@ var (
 
 func testRecordInit(t *testing.T) *Session {
 	t.Helper()
-	s := NewSession().Model(&User{})
+	s := NewSessionSpy().Model(&User{})
 	err1 := s.DropTable()
 	err2 := s.CreateTable()
 	_, err3 := s.Insert(user1, user2)

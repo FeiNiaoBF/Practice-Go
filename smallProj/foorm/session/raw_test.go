@@ -19,11 +19,12 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func NewSession() *Session {
+func NewSessionSpy() *Session {
 	return New(TestDB, TestDial)
 }
+
 func TestSession_Exec(t *testing.T) {
-	s := NewSession()
+	s := NewSessionSpy()
 	_, _ = s.Raw("DROP TABLE IF EXISTS User;").Exec()
 	_, _ = s.Raw("CREATE TABLE User(Name text);").Exec()
 	result, _ := s.Raw("INSERT INTO User(`Name`) values (?), (?)", "Tom", "Sam").Exec()
@@ -33,7 +34,7 @@ func TestSession_Exec(t *testing.T) {
 }
 
 func TestSession_QueryRows(t *testing.T) {
-	s := NewSession()
+	s := NewSessionSpy()
 	_, _ = s.Raw("DROP TABLE IF EXISTS User;").Exec()
 	_, _ = s.Raw("CREATE TABLE User(Name text);").Exec()
 	row := s.Raw("SELECT count(*) FROM User").QueryRow()

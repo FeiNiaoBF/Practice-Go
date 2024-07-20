@@ -8,7 +8,7 @@ type User struct {
 }
 
 func TestSession_CreateTable(t *testing.T) {
-	s := NewSession().Model(&User{})
+	s := NewSessionSpy().Model(&User{})
 	_ = s.DropTable()
 	_ = s.CreateTable()
 	if !s.HasTable() {
@@ -17,7 +17,7 @@ func TestSession_CreateTable(t *testing.T) {
 }
 
 func TestSession_Model(t *testing.T) {
-	s := NewSession().Model(&User{})
+	s := NewSessionSpy().Model(&User{})
 	table := s.RefTable()
 	s.Model(&Session{})
 	if table.Name != "User" || s.RefTable().Name != "Session" {
