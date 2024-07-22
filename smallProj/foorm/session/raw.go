@@ -43,7 +43,7 @@ func (s *Session) Raw(sql string, values ...any) *Session {
 // Exec raw sql with sqlValrs
 func (s *Session) Exec() (result sql.Result, err error) {
 	defer s.Clear()
-	log.Info("QUERY: "+s.sql.String(), s.sqlVars)
+	log.Info("[QUERY]: "+s.sql.String(), s.sqlVars)
 	if result, err = s.DB().Exec(s.sql.String(), s.sqlVars...); err != nil {
 		log.Error(err)
 	}
