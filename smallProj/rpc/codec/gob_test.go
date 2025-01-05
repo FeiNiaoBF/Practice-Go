@@ -56,7 +56,7 @@ func TestGobCodec_Write(t *testing.T) {
 	}
 	t.Run("Write header", func(t *testing.T) {
 		// write the header
-		err := codec.Write(h, nil)
+		err := codec.Write(h, "")
 		if err != nil {
 			t.Errorf("Write failed: %v", err)
 		}

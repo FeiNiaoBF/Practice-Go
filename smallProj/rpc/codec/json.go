@@ -38,6 +38,7 @@ func (c *JsonCodec) ReadBody(body interface{}) error {
 func (c *JsonCodec) Write(h *Header, body interface{}) (err error) {
 	defer func() {
 		// flush the buffer
+		// automatically flushes to call sys-writer when buffer is full
 		_ = c.buf.Flush()
 		if err != nil {
 			_ = c.Close()
@@ -55,5 +56,5 @@ func (c *JsonCodec) Write(h *Header, body interface{}) (err error) {
 }
 
 func (c *JsonCodec) Close() error {
-	return nil
+	return c.conn.Close()
 }

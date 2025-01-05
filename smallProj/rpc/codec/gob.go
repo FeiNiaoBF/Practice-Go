@@ -55,5 +55,5 @@ func (c *GobCodec) Write(h *Header, body interface{}) (err error) {
 }
 
 func (c *GobCodec) Close() error {
-	return nil
+	return c.conn.Close()
 }
