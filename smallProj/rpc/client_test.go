@@ -27,7 +27,7 @@ func TestDone(t *testing.T) {
 // Test Client
 
 func TestRegisterCall(t *testing.T) {
-	t.Log("register")
+	t.Log("register start")
 	buf := &bufferWrapper{Buffer: new(bytes.Buffer)}
 	client, err := NewClient(buf, DefaultOption)
 	if err != nil {
@@ -41,7 +41,7 @@ func TestRegisterCall(t *testing.T) {
 		Reply:         "world",
 	}
 	seq, err := client.registerCall(call)
-	t.Log("done")
+	t.Log("register done")
 	if err != nil {
 		t.Error(err)
 	}

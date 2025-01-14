@@ -2,13 +2,14 @@ package foorpg
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"fooprc/codec"
 	"log"
 	"net"
+	"sync"
 	"testing"
 	"time"
+
+	"fooprc/codec"
 )
 
 type bufferWrapper struct {
@@ -71,29 +72,30 @@ func startServer(addr chan string) {
 }
 
 func TestServerCanHandleRequest(t *testing.T) {
+	log.SetFlags(0)
 	addr := make(chan string)
 	go startServer(addr)
-	// 模拟一个客户端连接到rpc server
-	conn, _ := net.Dial("tcp", <-addr)
-	defer func() { _ = conn.Close() }()
+	// 使用 client
+	client, _ := Dial("tcp", <-addr)
+	defer func() { _ = client.Close() }()
 
 	time.Sleep(time.Second)
-	// send options
-	// 发送默认的Option
-	_ = json.NewEncoder(conn).Encode(DefaultOption)
-	// 创建一个新的GobCodec（打包）
-	cc := codec.NewGobCodec(conn)
+
+	var wg sync.WaitGroup
 	// send request & receive response
 	for i := 0; i < 5; i++ {
 		// mock header
-		h := &codec.Header{
-			ServiceMethod: "Foo.Sum",
-			Seq:           uint64(i),
-		}
-		_ = cc.Write(h, fmt.Sprintf("foorpc req %d", h.Seq))
-		_ = cc.ReadHeader(h)
-		var reply string
-		_ = cc.ReadBody(&reply)
-		log.Println("reply:", reply)
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			args := fmt.Sprintf("foo %d", i)
+			var reply string
+			if err := client.Call("foo", args, &reply); err != nil {
+				log.Fatalf("call foo failed: %v", err)
+			}
+			log.Println("reply:", reply)
+		}(i)
 	}
+
+	wg.Wait()
 }
